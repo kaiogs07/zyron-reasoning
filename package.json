@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A cognitive governance layer for AI coding assistants. Changes how the model thinks before generating — not just what it does.",
   "bin": {
-    "zyron-reasoning": "./tools/install.js"
+    "zyron-reasoning": "tools/install.js"
   },
   "files": [
     "tools/",
@@ -25,7 +25,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kaiogs07/zyron-reasoning.git"
+    "url": "git+https://github.com/kaiogs07/zyron-reasoning.git"
   },
   "homepage": "https://github.com/kaiogs07/zyron-reasoning",
   "bugs": {
