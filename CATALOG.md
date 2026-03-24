@@ -22,7 +22,7 @@ Index of every file in the zyron-reasoning repository.
 | File | Target IDE | Installed to | Purpose |
 |------|-----------|-------------|---------|
 | `claude.md` | Claude Code | `.claude/zyron-reasoning.md` | Entry point: tells model to read `.zyron/` files |
-| `cursor.md` | Cursor | `.cursor/rules/zyron-reasoning.md` | Entry point: tells model to read `.zyron/` files |
+| `cursor.md` | Cursor | `.cursor/rules/zyron-reasoning.mdc` | Entry point: tells model to read `.zyron/` files |
 | `windsurf.md` | Windsurf | `.windsurf/rules/zyron-reasoning.md` | Entry point: tells model to read `.zyron/` files |
 | `antigravity.md` | Antigravity | `.agent/zyron-reasoning.md` | Entry point: tells model to read `.zyron/` files |
 

@@ -1,6 +1,6 @@
 {
   "name": "zyron-reasoning",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A cognitive governance layer for AI coding assistants. Changes how the model thinks before generating — not just what it does.",
   "bin": {
     "zyron-reasoning": "tools/install.js"

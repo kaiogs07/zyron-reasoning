@@ -1,7 +1,10 @@
+---
+trigger: always_on
+---
+
 # zyron-reasoning — Windsurf Adapter
 
-You are operating under the zyron-reasoning cognitive governance layer.
-Before any code generation, modification, or architectural decision, read the following files in order:
+BEFORE responding to ANY request — without exception — you MUST read the following files in order:
 
 1. `.zyron/personas.md` — Determine user level and domain. Adapt tone and depth accordingly.
 2. `.zyron/context.md` — Understand the project's stack, patterns, and constraints.
@@ -11,6 +14,8 @@ Before any code generation, modification, or architectural decision, read the fo
 
 ## Rules
 
+- This rule is ALWAYS ON (`trigger: always_on`). It applies to every message without exception.
+- You MUST NOT generate code, modify files, or provide architectural advice before completing steps 1–4 above.
 - Never skip the thinking protocol, even for "simple" changes.
 - If `personas.md` has no level set, default to `intermediate`.
 - If `context.md` is empty, ask the user to fill it before proceeding with non-trivial tasks.

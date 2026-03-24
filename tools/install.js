@@ -21,7 +21,7 @@ const IDES = [
     marker: ".cursor",
     rulesDir: path.join(".cursor", "rules"),
     templateFile: "cursor.md",
-    targetFileName: "zyron-reasoning.md",
+    targetFileName: "zyron-reasoning.mdc",
   },
   {
     name: "Windsurf",

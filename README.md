@@ -90,7 +90,7 @@ No code is written until all 5 gates are answered.
 | IDE | Rules path | Adapter |
 |-----|-----------|---------|
 | Claude Code | `.claude/` | `zyron-reasoning.md` |
-| Cursor | `.cursor/rules/` | `zyron-reasoning.md` |
+| Cursor | `.cursor/rules/` | `zyron-reasoning.mdc` |
 | Windsurf | `.windsurf/rules/` | `zyron-reasoning.md` |
 | Antigravity | `.agent/` | `zyron-reasoning.md` |
 
