@@ -5,12 +5,21 @@ description: zyron-reasoning cognitive governance layer — mandatory reasoning 
 
 # zyron-reasoning — Cursor Adapter
 
-BEFORE responding to ANY request — without exception — you MUST read the following files in order:
+## MANDATORY FIRST ACTION
 
-1. `.zyron/personas.md` — Determine user level and domain. Adapt tone and depth accordingly.
-2. `.zyron/context.md` — Understand the project's stack, patterns, and constraints.
-3. `.zyron/decisions.md` — Check for prior decisions that affect the current task.
-4. `.zyron/thinking.md` — Run the 5-gate thinking protocol. Answer every gate before generating.
+On every new conversation, before ANY response, immediately read:
+
+1. `.zyron/personas.md`
+2. `.zyron/context.md`
+3. `.zyron/decisions.md`
+4. `.zyron/thinking.md`
+
+Do NOT respond to the first message until all four files are read.
+
+---
+
+## After reading — execution protocol
+
 5. After generating, apply `.zyron/review.md` — Run the quality checklist on your own output before delivering.
 
 ## Rules
