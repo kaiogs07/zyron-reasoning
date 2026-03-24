@@ -1,0 +1,169 @@
+#!/usr/bin/env node
+
+const fs = require("fs");
+const path = require("path");
+const readline = require("readline");
+
+// ---------------------------------------------------------------------------
+// IDE definitions
+// ---------------------------------------------------------------------------
+
+const IDES = [
+  {
+    name: "Claude Code",
+    marker: ".claude",
+    rulesDir: ".claude",
+    templateFile: "claude.md",
+    targetFileName: "zyron-reasoning.md",
+  },
+  {
+    name: "Cursor",
+    marker: ".cursor",
+    rulesDir: path.join(".cursor", "rules"),
+    templateFile: "cursor.md",
+    targetFileName: "zyron-reasoning.md",
+  },
+  {
+    name: "Windsurf",
+    marker: ".windsurf",
+    rulesDir: path.join(".windsurf", "rules"),
+    templateFile: "windsurf.md",
+    targetFileName: "zyron-reasoning.md",
+  },
+  {
+    name: "Antigravity",
+    marker: ".agent",
+    rulesDir: ".agent",
+    templateFile: "antigravity.md",
+    targetFileName: "zyron-reasoning.md",
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Paths
+// ---------------------------------------------------------------------------
+
+const projectDir = process.cwd();
+const packageRoot = path.resolve(__dirname, "..");
+const zyronSourceDir = path.join(packageRoot, ".zyron");
+const templatesDir = path.join(packageRoot, "templates");
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function copyDirSync(src, dest, force) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+  for (const entry of fs.readdirSync(src)) {
+    const srcPath = path.join(src, entry);
+    const destPath = path.join(dest, entry);
+    if (fs.statSync(srcPath).isDirectory()) {
+      copyDirSync(srcPath, destPath, force);
+    } else if (fs.existsSync(destPath) && !force) {
+      console.log(`  ⚠ ${path.relative(projectDir, destPath)} already exists — skipped`);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
+function detectIDEs() {
+  return IDES.filter((ide) =>
+    fs.existsSync(path.join(projectDir, ide.marker))
+  );
+}
+
+function installZyronFiles(force) {
+  const zyronDest = path.join(projectDir, ".zyron");
+  copyDirSync(zyronSourceDir, zyronDest, force);
+}
+
+function installAdapterForIDE(ide, force) {
+  const rulesDir = path.join(projectDir, ide.rulesDir);
+  if (!fs.existsSync(rulesDir)) {
+    fs.mkdirSync(rulesDir, { recursive: true });
+  }
+
+  const templateSrc = path.join(templatesDir, ide.templateFile);
+  const templateDest = path.join(rulesDir, ide.targetFileName);
+
+  if (fs.existsSync(templateDest) && !force) {
+    console.log(`  ⚠ ${path.relative(projectDir, templateDest)} already exists — skipped`);
+  } else {
+    fs.copyFileSync(templateSrc, templateDest);
+  }
+}
+
+function prompt(question) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+
+async function main() {
+  const args = process.argv.slice(2);
+  const installAll = args.includes("--all");
+  const force = args.includes("--force");
+
+  let targetIDEs = [];
+
+  if (installAll) {
+    targetIDEs = IDES;
+  } else {
+    targetIDEs = detectIDEs();
+
+    if (targetIDEs.length === 0) {
+      console.log("\nNo IDE detected in this project.");
+      console.log("Available IDEs:\n");
+      IDES.forEach((ide, i) => {
+        console.log(`  ${i + 1}. ${ide.name}`);
+      });
+      console.log();
+
+      const answer = await prompt(
+        "Enter the numbers of the IDEs to install for (comma-separated): "
+      );
+      const indices = answer
+        .split(",")
+        .map((s) => parseInt(s.trim(), 10) - 1)
+        .filter((i) => i >= 0 && i < IDES.length);
+
+      if (indices.length === 0) {
+        console.log("No valid selection. Aborting.");
+        process.exit(1);
+      }
+
+      targetIDEs = indices.map((i) => IDES[i]);
+    }
+  }
+
+  // Copy .zyron/ files once
+  installZyronFiles(force);
+
+  // Copy adapter for each target IDE
+  for (const ide of targetIDEs) {
+    installAdapterForIDE(ide, force);
+  }
+
+  console.log(
+    "\n✓ zyron-reasoning installed. Open .zyron/START_HERE.md to begin.\n"
+  );
+}
+
+main().catch((err) => {
+  console.error("Installation failed:", err.message);
+  process.exit(1);
+});
