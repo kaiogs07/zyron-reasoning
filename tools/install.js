@@ -81,19 +81,36 @@ function installZyronFiles(force) {
 }
 
 function installAdapterForIDE(ide, force) {
-  const rulesDir = path.join(projectDir, ide.rulesDir);
-  if (!fs.existsSync(rulesDir)) {
-    fs.mkdirSync(rulesDir, { recursive: true });
+  const rulesDir = path.resolve(projectDir, ide.rulesDir);
+  const templateSrc = path.resolve(templatesDir, ide.templateFile);
+  const templateDest = path.resolve(rulesDir, ide.targetFileName);
+
+  // Validate source template exists
+  if (!fs.existsSync(templateSrc)) {
+    console.error(`  ✗ ${ide.name}: source template not found at ${templateSrc}`);
+    return false;
   }
 
-  const templateSrc = path.join(templatesDir, ide.templateFile);
-  const templateDest = path.join(rulesDir, ide.targetFileName);
+  // Ensure target directory exists
+  fs.mkdirSync(rulesDir, { recursive: true });
 
+  // Skip if already exists and not forcing
   if (fs.existsSync(templateDest) && !force) {
-    console.log(`  ⚠ ${path.relative(projectDir, templateDest)} already exists — skipped`);
-  } else {
-    fs.copyFileSync(templateSrc, templateDest);
+    console.log(`  ⚠ ${ide.name}: ${path.relative(projectDir, templateDest)} already exists — skipped`);
+    return true;
   }
+
+  // Copy adapter
+  fs.copyFileSync(templateSrc, templateDest);
+
+  // Verify copy succeeded
+  if (!fs.existsSync(templateDest)) {
+    console.error(`  ✗ ${ide.name}: copy failed — file not found after write at ${templateDest}`);
+    return false;
+  }
+
+  console.log(`  ✓ ${ide.name}: adapter → ${path.relative(projectDir, templateDest)}`);
+  return true;
 }
 
 function prompt(question) {
@@ -154,8 +171,19 @@ async function main() {
   installZyronFiles(force);
 
   // Copy adapter for each target IDE
+  let failures = 0;
   for (const ide of targetIDEs) {
-    installAdapterForIDE(ide, force);
+    try {
+      const ok = installAdapterForIDE(ide, force);
+      if (!ok) failures++;
+    } catch (err) {
+      console.error(`  ✗ ${ide.name}: ${err.message}`);
+      failures++;
+    }
+  }
+
+  if (failures > 0) {
+    console.log(`\n⚠ zyron-reasoning installed with ${failures} adapter warning(s). Check messages above.`);
   }
 
   console.log(
